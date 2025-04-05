@@ -70,7 +70,7 @@
                     <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
                   </div>
 
-                  <div class="column has-text-centered">
+                  <div class="column">
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <!-- <span class="link-block">
@@ -125,7 +125,7 @@
                     <a href="https://huggingface.co/<HF REPO ID>" target="_blank" 
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
-                      <img src="static/images/hf-logo.png" alt="huggingface" >
+                      🤗
                     </span>
                       <span>Benchmark Data</span>
                     </a>
@@ -140,22 +140,51 @@
   </div>
 </section>
 
-
-
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <img src="static/images/caption-examples.png" 
-           alt="Caption examples"
-           type="image/png">
-      <h2 class="subtitle has-text-centered">
-        A Case from Visulogic. The solution relies on the symmetry axis’s rotation pattern and count. Most MLLMs fail to capture this, and LLMs lose symmetry axis information after captioning. 
-      </h2>
-    </div>
-  </div>
-</section>
-
-
+  <style>
+      .hero {
+          padding: 1rem;
+      }
+      
+      .container {
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+      }
+      
+      .item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+      }
+      
+      .item img {
+          max-width: 80%;
+          height: auto;
+      }
+      
+      .subtitle {
+          margin-top: 1rem;
+          max-width: 800px;
+          font-size: 1rem;
+          line-height: 1.5;
+      }
+  </style>
+<body>
+  <section class="hero">
+      <div class="hero-body">
+          <div class="container">
+              <div class="item">
+                  <img src="static/images/overview.svg" alt="overview"/>
+                  <h2 class="subtitle">
+                      Overview of Visulogic: The left figure shows the distribution of the 6 categories and their subcategories in our benchmark. The right figure shows the distribution of success rates of representative MLLMs across different categories in our benchmark.
+                  </h2>
+              </div>
+          </div>
+      </div>
+  </section>
+</body>
 <!-- Paper abstract -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
@@ -172,6 +201,54 @@
   </div>
 </section>
 <!-- End paper abstract -->
+<style>
+  .hero {
+      padding: 1rem;
+  }
+  
+  .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+  }
+  
+  .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+  }
+  
+  .item img {
+      max-width: 80%;
+      height: auto;
+  }
+  
+  .subtitle {
+      margin-top: 1rem;
+      max-width: 800px;
+      font-size: 1rem;
+      line-height: 1.5;
+  }
+</style>
+<body>
+<section class="hero">
+  <div class="hero-body">
+      <div class="container">
+          <div class="item">
+              <img src="static/images/caption-examples.png" alt="overview"/>
+              <h2 class="subtitle">
+                A Case from Visulogic. The solution relies on the symmetry axis’s rotation pattern and count. Most MLLMs fail to capture this, and LLMs lose symmetry axis information after captioning. 
+              </h2>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+
 
 <style>
   #sortableTable {
@@ -788,7 +865,9 @@
     </tbody>
 </table>
 </div>
-
+<div class="leaderboard-header" id="leaderboard">
+  <h1>EXAMPLES</h1>
+</div>
 
 <!-- Image carousel -->
 <section class="hero is-small">
@@ -994,7 +1073,7 @@
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>@article{Visulogic2025example,
+      <pre><code> @article{Visulogic2025example,
         title={VisuLogic: A Benchmark for Evaluating Visual Reasoning in Multi-modal Large Language Models},
         author={Last Name, First Name and Second Author, Name and Third Author, Name},
         year={2025},
