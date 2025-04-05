@@ -42,6 +42,7 @@
   <script defer src="static/js/fontawesome.all.min.js"></script>
   <script src="static/js/bulma-carousel.min.js"></script>
   <script src="static/js/bulma-slider.min.js"></script>
+  <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
   <script src="static/js/index.js"></script>
 </head>
 <body>
@@ -124,7 +125,7 @@
                     <a href="https://huggingface.co/<HF REPO ID>" target="_blank" 
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
-                      <img src="static/images/hf-logo.png" alt="huggingface" height="1em">
+                      <img src="static/images/hf-logo.png" alt="huggingface" >
                     </span>
                       <span>Benchmark Data</span>
                     </a>
@@ -171,6 +172,622 @@
   </div>
 </section>
 <!-- End paper abstract -->
+
+<style>
+  #sortableTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      font-size: 18px;
+  }
+  #sortableTable th, #sortableTable td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      transition: all 0.2s ease;
+  }
+  #sortableTable th {
+      cursor: pointer;
+      background-color: #4a5568;
+      color: white;
+      position: relative;
+      transition: all 0.3s ease;
+  }
+  #sortableTable th:hover {
+      background-color: #718096;
+      transform: translateY(-2px);
+  }
+  #sortableTable tr:nth-child(even) {
+      background-color: #f7f9fc;
+  }
+  #sortableTable tr:hover {
+      background-color: #e8f4f8;
+      transform: scale(1.02);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+  }
+  
+  /* 为不同区域设置不同的背景色 */
+  /* Rank */
+  #sortableTable td:nth-child(1) {
+      background-color: #f8fafc;  /* 浅灰色 */
+  }
+  
+  /* Models */
+  #sortableTable td:nth-child(2) {
+      background-color: #e8eef9;  /* 浅蓝灰色 */
+  }
+  
+  #sortableTable td:nth-child(3) {
+    background-color: #f0f7ff;  /* 淡蓝色 */
+}
+
+#sortableTable td:nth-child(4) {
+    background-color: #f3f0ff;  /* 淡紫色 */
+}
+
+#sortableTable td:nth-child(5) {
+    background-color: #fff0f7;  /* 淡粉色 */
+}
+
+/* MCQ (columns 6-7) */
+#sortableTable td:nth-child(6) {
+    background-color: #f0fff4;  /* 淡绿色 */
+}
+
+#sortableTable td:nth-child(7) {
+    background-color: #f0fffe;  /* 淡青色 */
+}
+
+#sortableTable td:nth-child(8) {
+    background-color: #fff5f0;  /* 淡橙色 */
+}
+
+#sortableTable td:nth-child(9) {
+    background-color: #fffef0;  /* 淡红色 */
+}
+  /* 奇数行稍微深一点的背景色 */
+  #sortableTable tr:nth-child(odd) td {
+      filter: brightness(0.98);
+  }
+
+  /* Hover效果 */
+  #sortableTable tr:hover td {
+      filter: brightness(0.95);
+      transition: all 0.3s ease;
+  }
+
+  /* 表头基础样式 */
+  #sortableTable thead th {
+      padding: 12px;
+      font-weight: 500;
+      text-align: center;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: white;
+  }
+
+  /* 不同区域的表头样式 */
+  /* Rank & Models */
+/* 为每列设置不同的深色背景 */
+/* 第1列 - 深蓝黑色 */
+#sortableTable thead tr th:nth-child(1) {
+    background-color: #1a202c;
+}
+
+/* 第2列 - 深紫色 */
+#sortableTable thead tr th:nth-child(2) {
+    background-color: #2C2F3B;
+}
+
+/* 第3列 - 深靛蓝 */
+#sortableTable thead tr th:nth-child(3) {
+    background-color: #343041;
+}
+
+/* 第4列 - 深青色 */
+#sortableTable thead tr th:nth-child(4),
+#sortableTable thead tr th:nth-child(5),
+#sortableTable thead tr th:nth-child(6),
+#sortableTable thead tr th:nth-child(7),
+#sortableTable thead tr th:nth-child(8),
+#sortableTable thead tr th:nth-child(9) {
+    background-color: #343233;
+}
+  /* 表头悬停效果 */
+  #sortableTable thead th:hover {
+      filter: brightness(1.1);
+      transition: all 0.3s ease;
+  }
+
+  /* 排序指示器样式 */
+  #sortableTable th.sorted-asc::after,
+  #sortableTable th.sorted-desc::after {
+      margin-left: 8px;
+      font-size: 0.8em;
+  }
+
+  /* 确保表格本身的样式配合表头 */
+  #sortableTable {
+      border-collapse: collapse;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  /* 移除hover效果 */
+  #sortableTable th:hover {
+      transform: none;
+      background-color: inherit;
+  }
+
+  /* 添加行动画相关样式 */
+  #sortableTable tbody tr {
+      transition: all 0.3s ease;
+  }
+
+  /* 添加行交换动画的类 */
+  .row-transition {
+      animation: rowMove 0.5s ease;
+  }
+
+  @keyframes rowMove {
+      0% { opacity: 0.5; transform: translateY(-10px); }
+      100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* 为所有图片添加过渡效果 */
+  img {
+      transition: transform 0.3s ease;
+      display: block;  /* 确保margin: auto生效 */
+      max-width: 100%;  /* 保持响应式 */
+  }
+
+  /* 鼠标悬停时的放大效果 */
+  img:hover {
+      transform: scale(1.3);  /* 放大到原始大小的1.3倍 */
+      transition-delay: 0.6s;  /* 添加1秒延迟 */
+  }
+
+  /* 可选：添加平滑阴影效果增强视觉体验 */
+  img {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  img:hover {
+      transform: scale(1.3);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition-delay: 0.6s;  /* 阴影效果也延迟1秒 */
+  }
+
+  /* 为前三设的高度、字体大小和粗细的过渡效果 */
+  #sortableTable tbody tr:nth-child(1) {
+      height: 80px;  /* 第一行最高 */
+      background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+      transition: all 0.3s ease;
+  }
+  
+  #sortableTable tbody tr:nth-child(1) td {
+      font-size: 22px;  /* 第一行字体最大 */
+      font-weight: 700;  /* 最粗 */
+      color: #000;  /* 更深的颜色 */
+  }
+  
+  #sortableTable tbody tr:nth-child(2) {
+      height: 65px;  /* 第二行次高 */
+      background: linear-gradient(to bottom, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+      transition: all 0.3s ease;
+  }
+  
+  #sortableTable tbody tr:nth-child(2) td {
+      font-size: 20px;  /* 第二行字体稍小 */
+      font-weight: 600;  /* 次粗 */
+      color: #1a1a1a;
+  }
+  
+  #sortableTable tbody tr:nth-child(3) {
+      height: 50px;  /* 第三行最接近普通行高 */
+      background: linear-gradient(to bottom, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0) 100%);
+      transition: all 0.3s ease;
+  }
+  
+  #sortableTable tbody tr:nth-child(3) td {
+      font-size: 18px;  /* 第三行字体更接近普通大小 */
+      font-weight: 500;  /* 中等粗细 */
+      color: #333;
+  }
+
+  /* 确保其他行保持正常样式 */
+  #sortableTable tbody tr {
+      height: 40px;  /* 普通行的高度 */
+      transition: all 0.3s ease;
+  }
+  
+  #sortableTable tbody tr td {
+      font-size: 16px;  /* 普通行的字体大小 */
+      font-weight: 400;  /* 普通粗细 */
+      color: #444;
+      vertical-align: middle;
+      transition: all 0.3s ease;
+  }
+
+  /* 保持单元格内容垂直居中 */
+  #sortableTable tbody td {
+      vertical-align: middle;
+  }
+
+  .name-link {
+      font-size: 18px;
+      font-weight: bold;
+      color: #2d3748;
+      text-decoration: none;
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+      position: relative;
+  }
+
+  .name-link::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: #3182ce;
+      left: 0;
+      bottom: -5px;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+  }
+
+  .name-link:hover {
+      color: #3182ce;
+      transform: translateY(-3px);
+  }
+
+  .name-link:hover::after {
+      transform: scaleX(1);
+  }
+
+  .button {
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #3182ce;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+      margin: 5px;
+  }
+
+  .button:hover {
+      background-color: #2b6cb0;
+      transform: translateY(-3px);
+  }
+
+  .styled-button {
+      font-size: 20px;
+      font-weight: bold;
+      color: #000000; /* 黑色文字 */
+      background-color: #ffffff; /* 白色背景 */
+      border: 2px solid #3182ce; /* 蓝色边框 */
+      border-radius: 5px;
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+      margin: 5px;
+  }
+
+  .styled-button:hover {
+      background-color: #2b6cb0; /* 深蓝色背景 */
+      color: #ffffff; /* 白色文字 */
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease-out;
+  }
+
+  .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+  }
+
+  a {
+      transition: all 0.3s ease;
+      position: relative;
+  }
+
+  a:hover {
+      color: #3182ce;
+  }
+
+  a::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -2px;
+      left: 0;
+      background-color: #3182ce;
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+  }
+
+  a:hover::after {
+      transform: scaleX(1);
+  }
+</style>
+      
+<div class="leaderboard-header" id="leaderboard">
+  <h1>Leaderboard</h1>
+</div>
+
+
+<style>
+  .leaderboard-header {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .leaderboard-header h1 {
+    font-size: 48px;
+    color: #2d3748;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .leaderboard-description {
+    max-width: 1200px;
+    margin: 0 auto;
+    color: #4a5568;
+    line-height: 1.6;
+    font-size: 17px;
+    text-align: left;
+    background: #f7fafc;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .leaderboard-description ul {
+    margin: 15px 0;
+    padding-left: 20px;
+  }
+
+  .leaderboard-description li {
+    margin: 8px 0;
+  }
+
+  .leaderboard-description strong {
+    color: #2d3748;
+  }
+
+  .font-size-controls {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 1000;
+  }
+
+  .font-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background-color: #4a5568;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+  }
+
+  .font-button:hover {
+      background-color: #2d3748;
+      transform: scale(1.1);
+  }
+
+  .font-button span {
+      font-size: 16px;
+  }
+</style>
+
+<div style="width:80%; margin:0 auto; text-align: center">
+  <table id="sortableTable">
+    <thead>
+        <tr>
+          <!-- <th onclick="sortTable(0)">Models</th> -->
+            <th>Rank</th>
+            <th>Model</th>
+            <th>Overall</th>
+            <th>Qua.</th>
+            <th>Spa.</th>
+            <th>Pos.</th>
+            <th>Att.</th>
+            <th>Sty.</th>
+            <th>Oth.</th>
+        </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>-</td>
+        <td><a href="#">Human</a></td>
+        <td>51.4</td>
+        <td>45.3</td>
+        <td>52.7</td>
+        <td>71.1</td>
+        <td>50.0</td>
+        <td>47.5</td>
+        <td>44.2</td>
+        </tr>
+      <tr>
+        <td>1</td>
+        <td><a href="#">InternVL2.5-38B-RL</a></td>
+        <td>31.1</td>
+        <td>31.2</td>
+        <td>31.2</td>
+        <td>26.5</td>
+        <td>30.5</td>
+        <td>30.0</td>
+        <td>38.9</td>
+        </tr>
+        <tr>
+        <td>2</td>
+        <td><a href="#">doubao-1-5-vision-pro-32k-250115</a></td>
+        <td>28.1</td>
+        <td>28.1</td>
+        <td>23.8</td>
+        <td>29.1</td>
+        <td>25.1</td>
+        <td>32.1</td>
+        <td>35.0</td>
+        </tr>
+        <tr>
+        <td>3</td>
+        <td><a href="#">gemini-2.0-pro-exp-02-05</a></td>
+        <td>28.0</td>
+        <td>29.7</td>
+        <td>24.2</td>
+        <td>27.9</td>
+        <td>30.5</td>
+        <td>22.2</td>
+        <td>33.3</td>
+        </tr>
+        <tr>
+        <td>4</td>
+        <td><a href="#">Qwen2.5-VL-7B-Instruct-RL</a></td>
+        <td>28.0</td>
+        <td>26.6</td>
+        <td>33.8</td>
+        <td>29.4</td>
+        <td>23.2</td>
+        <td>18.9</td>
+        <td>29.6</td>
+        </tr>
+        <tr>
+        <td>5</td>
+        <td><a href="#">InternVL2.5-78B</a></td>
+        <td>27.3</td>
+        <td>26.6</td>
+        <td>26.0</td>
+        <td>26.5</td>
+        <td>26.8</td>
+        <td>31.1</td>
+        <td>30.6</td>
+        </tr>
+        <tr>
+        <td>6</td>
+        <td><a href="#">GPT-4o</a></td>
+        <td>26.3</td>
+        <td>28.6</td>
+        <td>24.7</td>
+        <td>27.2</td>
+        <td>26.8</td>
+        <td>20.0</td>
+        <td>25.9</td>
+        </tr>
+        <tr>
+        <td>7</td>
+        <td><a href="#">Qwen2.5VL-72B-Instruct</a></td>
+        <td>26.2</td>
+        <td>25.2</td>
+        <td>23.8</td>
+        <td>27.2</td>
+        <td>25.6</td>
+        <td>25.6</td>
+        <td>34.3</td>
+        </tr>
+        <tr>
+        <td>8</td>
+        <td><a href="#">Qwen2.5-VL-7B-Instruct</a></td>
+        <td>26.0</td>
+        <td>27.6</td>
+        <td>20.9</td>
+        <td>25.2</td>
+        <td>23.2</td>
+        <td>37.8</td>
+        <td>25.0</td>
+        </tr>
+        <tr>
+        <td>9</td>
+        <td><a href="#">kimi-latest</a></td>
+        <td>25.9</td>
+        <td>24.9</td>
+        <td>29.4</td>
+        <td>26.5</td>
+        <td>28.0</td>
+        <td>16.7</td>
+        <td>26.9</td>
+        </tr>
+        <tr>
+        <td>10</td>
+        <td><a href="#">Ovis2-8B</a></td>
+        <td>25.6</td>
+        <td>26.1</td>
+        <td>23.8</td>
+        <td>27.2</td>
+        <td>28.0</td>
+        <td>25.6</td>
+        <td>24.1</td>
+        </tr>
+        <tr>
+        <td>11</td>
+        <td><a href="#">InternVL2.5-38B</a></td>
+        <td>25.5</td>
+        <td>24.4</td>
+        <td>26.4</td>
+        <td>27.2</td>
+        <td>23.2</td>
+        <td>25.6</td>
+        <td>26.9</td>
+        </tr>
+        <tr>
+        <td>12</td>
+        <td><a href="#">LLaVA-OneVision-7B (SI)</a></td>
+        <td>25.3</td>
+        <td>22.4</td>
+        <td>27.3</td>
+        <td>33.1</td>
+        <td>23.2</td>
+        <td>25.6</td>
+        <td>22.2</td>
+        </tr>
+        <tr>
+        <td>13</td>
+        <td><a href="#">MiniCPM-o-2.6</a></td>
+        <td>25.3</td>
+        <td>25.6</td>
+        <td>23.0</td>
+        <td>27.3</td>
+        <td>21.9</td>
+        <td>24.5</td>
+        <td>29.9</td>
+        </tr>
+    </tbody>
+</table>
+</div>
 
 
 <!-- Image carousel -->
