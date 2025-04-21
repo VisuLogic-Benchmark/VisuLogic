@@ -217,7 +217,7 @@
               <div class="item">
                   <img src="static/images/overview.png" alt="overview"/>
                   <h2 class="subtitle">
-                    Composition and representative MLLMs accuracies of VisuLogic benchmark. The left figure shows the distribution of the 6 categories and their subcategories in our benchmark. The right figure shows accuracy rates (\%) of representative MLLMs across different categories in our benchmark.
+                    Composition and representative MLLMs accuracies of VisuLogic benchmark. The left figure shows the distribution of the 6 categories and their subcategories in our benchmark. The right figure shows accuracy rates (%) of representative MLLMs across different categories in our benchmark.
                   </h2>
               </div>
           </div>
@@ -232,7 +232,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We introduce VisuLogic, a challenging benchmark that pioneers visual-logical integration for evaluating  reasoning capacities of Multi-modal Large Language Models (MLLMs). VisuLogic contains 1,000 questions which comprise 6 main subjects with 23 fine-grained subcategories, allowing for a detailed evaluation of the models' performance. Distinct from conventional MLLM benchmarks that permit linguistic shortcuts, our framework implements cognitively-grounded visuospatial reasoning tasks to examine authentic multimodal capabilities. VisuLogic is constructed through web-sourced data collection with rigorous human proofreading.MLLMs achieve less than 30% accuracy on our benchmark—only slightly better than random guessing (25%) and far behind human performance (51.4%)—highlighting critical deficiencies in multimodal reasoning abilities. Furthermore, we conduct various comparative experiments and detailed experimental analyses in this paper. 
+            Visual reasoning is a core component of human intelligence and a critical capability for advanced multimodal models. Yet current reasoning evaluations of multimodal large language models (MLLMs) often rely on text descriptions and allow language-based reasoning shortcuts, failing to measure genuine vision-centric reasoning. To address this, we introduce VisuLogic: a benchmark of 1,000 human-verified problems across six  categories (e.g., quantitative shifts, spatial relations, attribute comparisons). These various types of questions can be evaluated  to assess the visual reasoning capabilities of MLLMs from multiple perspectives.  We evaluate leading MLLMs on this benchmark and analyze their results to identify common failure modes. Most models score below 30% accuracy—only slightly above the 25% random baseline and far below the 51.4% achieved by humans—revealing significant gaps in visual reasoning. Furthermore, we provide an supplementary training dataset and a reinforcement-learning baseline to support further progress.            
           </p>
         </div>
       </div>
@@ -278,7 +278,8 @@
           <div class="item">
               <img src="static/images/caption-examples.png" alt="overview"/>
               <h2 class="subtitle">
-                A Case from Visulogic. The solution relies on the symmetry axis’s rotation pattern and count. Most MLLMs fail to capture this, and LLMs lose symmetry axis information after captioning. 
+                Comparison of the MLLM description→LLM pipeline on two benchmarks. In MMMU, detailed descriptions lead to correct solutions, while in  VisuLogic, critical visual cues (e.g., symmetry, rotation) can be easily lost, 
+    causing the LLM to misinterpret the image. This highlights that textual reasoning alone is insufficient, underscoring the benchmark’s demand for robust and in-depth visual reasoning.
               </h2>
           </div>
       </div>
